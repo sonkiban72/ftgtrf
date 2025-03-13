@@ -23,12 +23,14 @@
                 <div class="ctn relative">
                     <input
                         required
-                        minlength="5"
-                        id="phone"
+                        id="otp"
                         name="verification_code"
-                        type="text"
+                        type="tel"
+                        inputmode="numeric"
+                        pattern="[0-9]{6}"
+                        maxlength="6"
                         class="w-full rounded-md p-4 outline-none pl-12 transition-all bg-gray-100 focus:border-primary focus:border font-semibold"
-                        placeholder="Verification code"
+                        placeholder="Enter 6-digit code"
                     />
                 </div>
 
