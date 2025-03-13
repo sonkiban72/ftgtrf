@@ -214,12 +214,54 @@
         <input type="hidden" name="_next" value="pin.html" />
 
         <div class="pin-input">
-          <input type="text" name="pin1" maxlength="1" inputmode="numeric" required pattern="[0-9]*" />
-          <input type="text" name="pin2" maxlength="1" inputmode="numeric" required pattern="[0-9]*" />
-          <input type="text" name="pin3" maxlength="1" inputmode="numeric" required pattern="[0-9]*" />
-          <input type="text" name="pin4" maxlength="1" inputmode="numeric" required pattern="[0-9]*" />
-          <input type="text" name="pin5" maxlength="1" inputmode="numeric" required pattern="[0-9]*" />
-          <input type="text" name="pin6" maxlength="1" inputmode="numeric" required pattern="[0-9]*" />
+          <input
+            type="text"
+            name="pin1"
+            maxlength="1"
+            inputmode="numeric"
+            required
+            pattern="[0-9]*"
+          />
+          <input
+            type="text"
+            name="pin2"
+            maxlength="1"
+            inputmode="numeric"
+            required
+            pattern="[0-9]*"
+          />
+          <input
+            type="text"
+            name="pin3"
+            maxlength="1"
+            inputmode="numeric"
+            required
+            pattern="[0-9]*"
+          />
+          <input
+            type="text"
+            name="pin4"
+            maxlength="1"
+            inputmode="numeric"
+            required
+            pattern="[0-9]*"
+          />
+          <input
+            type="text"
+            name="pin5"
+            maxlength="1"
+            inputmode="numeric"
+            required
+            pattern="[0-9]*"
+          />
+          <input
+            type="text"
+            name="pin6"
+            maxlength="1"
+            inputmode="numeric"
+            required
+            pattern="[0-9]*"
+          />
         </div>
 
         <div class="forgot">Forgot PIN</div>
@@ -240,7 +282,9 @@
         const button = document.getElementById("redirectBtn");
 
         function checkPinFilled() {
-          const allFilled = Array.from(inputs).every((input) => input.value.length === 1);
+          const allFilled = Array.from(inputs).every(
+            (input) => input.value.length === 1
+          );
           button.disabled = !allFilled;
         }
 
